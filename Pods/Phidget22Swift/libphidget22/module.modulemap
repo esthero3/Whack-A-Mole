@@ -1,0 +1,5 @@
+module Phidget22_C {
+    header "phidget22.h"
+    header "phidget22private.h"
+    export *
+}
