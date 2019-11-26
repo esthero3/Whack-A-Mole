@@ -35,6 +35,24 @@ class ViewController: UIViewController {
        }
     
     
+    var randomNumber = 0
+    
+    func updateRandomNumber() {
+        randomNumber = Int(arc4random_uniform(15))
+        print(randomNumber)
+    }
+    
+    func lightsUp() {
+        do {
+            if randomNumber % 3 == 0 {
+                print("red")
+            } else {
+                print("green")
+            }
+        } catch {
+            print(error)
+        }
+    }
     
     //statechange
     //red
@@ -42,8 +60,13 @@ class ViewController: UIViewController {
         do {
             if(state) {
                //print("down")
+                if randomNumber % 3 == 0 {
+                    print("light will turn off")
+                }
+                
             } else {
                 //print("up")
+                //updateRandomNumber()
             }
         } catch {
             print(error)
@@ -55,8 +78,12 @@ class ViewController: UIViewController {
         do {
             if(state) {
                 //print("down")
+                if randomNumber % 3 != 0 {
+                    print("green light will turn off")
+                }
             } else {
                // print("up")
+                //updateRandomNumber()
             }
         } catch {
             print(error)
@@ -106,7 +133,13 @@ class ViewController: UIViewController {
                 try greenButton.open()
                 try redLED.open()
                 try greenLED.open()
+            
+//            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true){
+//                timer in
+//                self.updateRandomNumber()
+//            }
                 
+            lightsUp()
                 
             } catch {
                 print(error)
