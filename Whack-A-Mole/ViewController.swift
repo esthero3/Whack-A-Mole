@@ -39,11 +39,11 @@ class ViewController: UIViewController {
     
     func updateRandomNumber() {
         
-        randomNumber = Int(arc4random_uniform(15))
+        randomNumber = Int(arc4random_uniform(2))
         print(randomNumber)
         
         do{
-        if randomNumber % 3 == 0 {
+        if randomNumber == 0 {
             print("red light on")
             try redLED.setState(true)
         } else {
@@ -63,9 +63,13 @@ class ViewController: UIViewController {
         do {
             if(state) {
                //print("down")
+                if randomNumber == 0 {
                 print("light will turn off")
                     try redLED.setState(false)
                     updateRandomNumber()
+                } else {
+                    print("wrong!")
+                }
                 
                 
             } else {
@@ -82,10 +86,13 @@ class ViewController: UIViewController {
         do {
             if(state) {
                 //print("down")
-                
+                if randomNumber != 0 {
                     print("green light will turn off")
                     try greenLED.setState(false)
                     updateRandomNumber()
+                } else {
+                    print("wrong!")
+                }
                 
             } else {
                                
@@ -142,6 +149,10 @@ class ViewController: UIViewController {
             Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false){
                 timer in
                 self.updateRandomNumber()
+            }
+            
+            func updateTime() {
+                
             }
                 
                 
