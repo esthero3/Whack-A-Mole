@@ -34,25 +34,29 @@ class ViewController: UIViewController {
            print("Green LED Attached")
        }
     
+    //global variables
     var timeCount = 0;
-    
-    func initTime() {
-        var timeStampOne = NSDate().timeIntervalSince1970
-    }
-    
-    
-       
-    
-    
     var randomNumber = 0
     
+    var timeStampOne = NSDate().timeIntervalSince1970
+    var timeStampTwo = NSDate().timeIntervalSince1970
+    
+    var finalNumber = Double(0)
+    var finalSum = [Double]()
+    
+    
+    
+    //function to get a random number.
     func updateRandomNumber() {
         
-        initTime()
+        //time when a random number is generated
+        timeStampOne = NSDate().timeIntervalSince1970
         
+       
+        //gets a random number between 0 and 1
         randomNumber = Int(arc4random_uniform(2))
-        print(randomNumber)
         
+        //if the number is 0, the red led will turn on. if the number is 1, green led will turn on
         do{
         if randomNumber == 0 {
             print("red light on")
@@ -69,46 +73,71 @@ class ViewController: UIViewController {
     
     
     
+    
     //statechange
     //red
     func redButtonStateChange(sender: Phidget, state:Bool) {
         do {
+            
+            //when red button is pressed
             if(state) {
                 
-                var timeStampTwo = NSDate().timeIntervalSince1970
+                //time when button is pressed
+                timeStampTwo = NSDate().timeIntervalSince1970
+
+                //gets the difference between time of when number is generated and when button is pressed
+                finalNumber = Double(timeStampTwo - timeStampOne)
+                print(finalNumber)
                 
+                //puts all the time differences in an array
+                finalSum.append(finalNumber)
+                                
         
-                
-               //print("down")
+                //turn off the light and allows a new number to be generated
                 if randomNumber == 0 {
-                print("light will turn off")
+                //print("light will turn off")
                     try redLED.setState(false)
                     updateRandomNumber()
                     
-                    
+                //pressing the red button when the green led is on
                 } else {
                     print("wrong!")
                 }
-                
-                
+            //when button is not pressed
             } else {
-                
-                
+
             }
         } catch {
             print(error)
         }
     }
     
+    
+    
+    
+    
     //green
     func greenButtonStateChange(sender: Phidget, state:Bool) {
         do {
             if(state) {
-                //print("down")
+                
+                //time when button is pressed
+                timeStampTwo = NSDate().timeIntervalSince1970
+                 
+                //gets the difference between time of when number is generated and when button is pressed
+                finalNumber = Double(timeStampTwo - timeStampOne)
+                 print(finalNumber)
+                
+                //puts all the time differences in an array
+                finalSum.append(finalNumber)
+                
+                //turn off the light and allows a new number to be generated
                 if randomNumber != 0 {
-                    print("green light will turn off")
+                    //print("green light will turn off")
                     try greenLED.setState(false)
                     updateRandomNumber()
+                    
+                //pressing the green button when the red led is on
                 } else {
                     print("wrong!")
                 }
@@ -127,10 +156,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-     
-        
-        
-        
         do {
                 //server discovery
                 try Net.enableServerDiscovery(serverType: .deviceRemote)
@@ -176,39 +201,34 @@ class ViewController: UIViewController {
                 self.timeCount += 1
                 //print(self.timeCount)
                 
-                
+                //stops game after 20 seconds
                 if self.timeCount == 20 {
                     timer.invalidate()
+                    
+                    do {
+                        try self.redLED.setState(false)
+                        try self.greenLED.setState(false)
+                    } catch {
+                        print(error)
+                    }
+                    
+                    //sum of the time to press buttons
+                    let sum = self.finalSum.reduce(0, +)
+                    
                     print("Time's up. Game Over")
+                    print("final score \(sum)")
                 }
-                
             }
-            
-      
-            func getCurrentMillis()->Int64{
-                return  Int64(NSDate().timeIntervalSince1970 * 1000)
-            }
-
-            
-
-
-            
+       
             //Timer to start game. Turns on first light.
             Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false){
                 timer in
                 self.updateRandomNumber()
             }
-            
-            
-                   
+
             } catch {
                 print(error)
             }
         }
-    
-    
-    
-
-
 }
 
