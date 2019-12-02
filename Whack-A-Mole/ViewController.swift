@@ -34,10 +34,21 @@ class ViewController: UIViewController {
            print("Green LED Attached")
        }
     
+    var timeCount = 0;
+    
+    func initTime() {
+        var timeStampOne = NSDate().timeIntervalSince1970
+    }
+    
+    
+       
+    
     
     var randomNumber = 0
     
     func updateRandomNumber() {
+        
+        initTime()
         
         randomNumber = Int(arc4random_uniform(2))
         print(randomNumber)
@@ -53,6 +64,7 @@ class ViewController: UIViewController {
             } catch {
             print(error)
         }
+        
     }
     
     
@@ -62,11 +74,18 @@ class ViewController: UIViewController {
     func redButtonStateChange(sender: Phidget, state:Bool) {
         do {
             if(state) {
+                
+                var timeStampTwo = NSDate().timeIntervalSince1970
+                
+        
+                
                //print("down")
                 if randomNumber == 0 {
                 print("light will turn off")
                     try redLED.setState(false)
                     updateRandomNumber()
+                    
+                    
                 } else {
                     print("wrong!")
                 }
@@ -108,6 +127,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+     
+        
+        
+        
         do {
                 //server discovery
                 try Net.enableServerDiscovery(serverType: .deviceRemote)
@@ -146,16 +169,38 @@ class ViewController: UIViewController {
                 try redLED.open()
                 try greenLED.open()
             
-            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false){
+            
+            //game run timer.
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true){
+                timer in
+                self.timeCount += 1
+                //print(self.timeCount)
+                
+                
+                if self.timeCount == 20 {
+                    timer.invalidate()
+                    print("Time's up. Game Over")
+                }
+                
+            }
+            
+      
+            func getCurrentMillis()->Int64{
+                return  Int64(NSDate().timeIntervalSince1970 * 1000)
+            }
+
+            
+
+
+            
+            //Timer to start game. Turns on first light.
+            Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false){
                 timer in
                 self.updateRandomNumber()
             }
             
-            func updateTime() {
-                
-            }
-                
-                
+            
+                   
             } catch {
                 print(error)
             }
